@@ -28,7 +28,7 @@ def main(args=None):
     msg = Image(data=np.empty(shape=length, dtype=np.uint8).tobytes())
     pubs = [node.create_publisher(Image, f"topic_{i}", qos, callback_group=ReentrantCallbackGroup()) for i in range(num_pubs)]
 
-    print(f"Images with {hz:.1f} hz of size {msg.data.buffer_info()[1] * msg.data.itemsize} bytes")
+    print(f"Images with {hz:.1f} hz of size {msg.data.buffer_info()[1] * msg.data.itemsize} bytes, qos is {qos_name}")
 
     # Spin
     executor = MultiThreadedExecutor(num_threads=num_pubs)
