@@ -15,21 +15,27 @@ def main(args=None):
     rclpy.init()
     node = rclpy.create_node(f"test_sub_{randint(0, 1000)}")
     num = node.declare_parameter("num", 1).value
+    gap_time = node.declare_parameter("gap_time", 0.150).value
     proc = psutil.Process()
 
-    last_log = time()
+    t_last_log = time()
+    t_last_msg = time()
     num_recv = 0
     log_interval = Interval(2.0)
 
     def callback(msg: Image):
-        nonlocal num_recv, last_log, log_interval
+        nonlocal num_recv, t_last_log, t_last_msg       , log_interval
         num_recv += 1
+        now = time()
+        dt_msg = now - t_last_msg
+        if dt_msg > gap_time:
+            print(f"GAP DETECTED: {dt_msg:.3f}s, max is {gap_time:.3f}")
         if log_interval.tick():
-            now = time()
-            dt = now - last_log
-            print(f"{num_recv / dt:.2f} FPS reception, {proc.cpu_percent()}% CPU")
+            dt_interval = now - t_last_log
+            print(f"{num_recv / dt_interval:.2f} FPS reception, {proc.cpu_percent()}% CPU")
             num_recv = 0
-            last_log = now
+            t_last_log = now
+        t_last_msg = now
 
     # Create subs
     qos = qos_profile_sensor_data
