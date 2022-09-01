@@ -21,19 +21,22 @@ def main(args=None):
     t_last_log = time()
     t_last_msg = time()
     num_recv = 0
+    latency = 0.0
     log_interval = Interval(2.0)
 
     def callback(msg: Image):
-        nonlocal num_recv, t_last_log, t_last_msg       , log_interval
+        nonlocal num_recv, latency, t_last_log, t_last_msg, log_interval
         num_recv += 1
         now = time()
         dt_msg = now - t_last_msg
+        latency = max(latency, dt_msg)
         if dt_msg > gap_time:
             print(f"GAP DETECTED: {dt_msg:.3f}s, max is {gap_time:.3f}")
         if log_interval.tick():
             dt_interval = now - t_last_log
-            print(f"{num_recv / dt_interval:.2f} FPS reception, {proc.cpu_percent()}% CPU")
+            print(f"{num_recv / dt_interval:.2f} FPS reception, {proc.cpu_percent()}% CPU, latency={latency:.3f}")
             num_recv = 0
+            latency = 0.0
             t_last_log = now
         t_last_msg = now
 
