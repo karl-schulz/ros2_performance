@@ -36,7 +36,7 @@ def main(args=None):
             dt_interval = now - t_last_log
             print(f"{num_recv / dt_interval:.2f} FPS reception, {proc.cpu_percent()}% CPU, max_gap={max_gap:.3f}")
             num_recv = 0
-            latency = 0.0
+            max_gap = 0.0
             t_last_log = now
         t_last_msg = now
 
