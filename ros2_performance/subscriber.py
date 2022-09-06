@@ -31,7 +31,7 @@ def main(args=None):
         dt_msg = now - t_last_msg
         max_gap = max(max_gap, dt_msg)
         if dt_msg > gap_time:
-            node.get_logger().warn(f"GAP DETECTED: {dt_msg:.3f}s, max is {gap_time:.3f}")
+            pass  # node.get_logger().warn(f"GAP DETECTED: {dt_msg:.3f}s, max is {gap_time:.3f}")
         if log_interval.tick():
             dt_interval = now - t_last_log
             node.get_logger().info(f"{num_recv / dt_interval:.2f} FPS reception, {proc.cpu_percent()}% CPU, max_gap={max_gap:.3f}")
