@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import time
 from random import randint
 from threading import Thread, Event
 
@@ -45,14 +46,19 @@ def main(args=None):
     pub_interval = Interval(1 / hz)
     diag_interval = Interval(2.0)
     try:
+        published = 0
+        published_start = time.time()
         while thread.is_alive():
             if pub_interval.tick():
                 for pub in pubs:
                     pub.publish(msg)
+                    published += 1
             else:
                 pub_interval.wait()
             if diag_interval.tick():
-                node.get_logger().info(f"{proc.cpu_percent()}%")
+                node.get_logger().info(f"{proc.cpu_percent()}% - {published/(time.time() - published_start):.2f} Hz publishing")
+                published = 0
+                published_start = time.time()
     except KeyboardInterrupt:
         stop_event.set()
         pass
